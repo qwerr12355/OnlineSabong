@@ -300,7 +300,7 @@ class Admin extends CI_Controller {
 					'NewBalance' => $newbalance,
 					'Amount' => $this->input->post('Amount'),
 					'UserID' => $this->input->post('UserID'),
-					'ProccessedBy' => $_SESSION['UserID'],
+					'ProcessedBy' => $_SESSION['UserID'],
 					'Details' => $this->input->post('Details'),
 					'Description' => "Admin deposit",
 					'Type' => "Debit"
@@ -335,36 +335,43 @@ class Admin extends CI_Controller {
 			$credit=$creditquery->total;
 		}
 		$lastbalance=$debit-$credit;
-		$newbalance=$lastbalance-$this->input->post('Amount');
-		$data = array(
-			'Amount' => $this->input->post('Amount'),
-			'LastBalance' => $lastbalance,
-			'NewBalance' => $newbalance,
-			'Amount' => $this->input->post('Amount'),
-			'UserID' => $this->input->post('UserID'),
-			'ProccessedBy' => $_SESSION['UserID'],
-			'Details' => $this->input->post('Details'),
-			'Description' => "Admin deposit",
-			'Type' => "Credit"
-		);
 
 		$result['success']=false;
-		$result['lastbalance']=$lastbalance;
-		$result['newbalance']=$newbalance;
+
 		if($_SESSION['Password']==$this->input->post('Password')){
 			if($this->input->post('Amount')<=0){
 				$result['error']="Balance must be greater than zero!";
 			}else{
-				if($this->input->post('Amount')<=$lastbalance){
-					if($this->UserWalletTransactionModel->Add($data)){
-						$result['success']=true;
-						$userdata = array('WalletBalance' => $newbalance );
-						$whereuser = array('UserID' => $this->input->post('UserID') );
-						$this->UserModel->UpdateUser($whereuser,$userdata);
+				if(ctype_digit($this->input->post('Amount')) && (float) $this->input->post('Amount') > 0){
+					$newbalance=$lastbalance-$this->input->post('Amount');
+					$data = array(
+						'Amount' => $this->input->post('Amount'),
+						'LastBalance' => $lastbalance,
+						'NewBalance' => $newbalance,
+						'Amount' => $this->input->post('Amount'),
+						'UserID' => $this->input->post('UserID'),
+						'ProcessedBy' => $_SESSION['UserID'],
+						'Details' => $this->input->post('Details'),
+						'Description' => "Admin deposit",
+						'Type' => "Credit"
+					);
+
+					$result['lastbalance']=$lastbalance;
+					$result['newbalance']=$newbalance;
+					if($this->input->post('Amount')<=$lastbalance){
+						if($this->UserWalletTransactionModel->Add($data)){
+							$result['success']=true;
+							$userdata = array('WalletBalance' => $newbalance );
+							$whereuser = array('UserID' => $this->input->post('UserID') );
+							$this->UserModel->UpdateUser($whereuser,$userdata);
+						}
+					}else{
+						$result['error']="Balance is not enough!";
 					}
 				}else{
-					$result['error']="Balance is not enough!";
+					$result['error']="Please enter a valid amount!";
 				}
+
 			}
 		}else{
 			$result['error']="Password was incorrect!";
