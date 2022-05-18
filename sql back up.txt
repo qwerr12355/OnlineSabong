@@ -1,0 +1,70 @@
+CREATE TABLE users
+(
+    UserID int primary key AUTO_INCREMENT,
+    Username varchar(255) not null,
+    Password varchar(255) not null,
+    DateCreated DateTime DEFAULT CURRENT_TIMESTAMP(),
+    UserTypeID int not null,
+    Status varchar(255) not null default "New user",
+    WalletBalance double not null,
+    CurrentCommission double not null,
+    TotalCommission double not null,
+    FOREIGN KEY(UserTypeID) REFERENCES usertype(UserTypeID)
+);
+
+CREATE TABLE userrecruiter
+(
+    UserRecruiterID int primary key AUTO_INCREMENT,
+    UserID int not null,
+    RecruiterID int not null,
+    FOREIGN KEY(UserID) REFERENCES users(UserID),
+   	FOREIGN KEY(RecruiterID) REFERENCES users(UserID)
+);
+
+create table userinfo
+(
+    UserInfoID int PRIMARY key AUTO_INCREMENT,
+    Firstname varchar(255) not null,
+    Lastname varchar(255) not null,
+    GcashNumber varchar(255),
+    GcashName varchar(255),
+    FBLink varchar(255),
+    UserID int not null,
+    FOREIGN KEY(UserID) REFERENCES users(UserID)
+    
+)
+
+create table userwallettransaction
+(
+    UserWalletTransactionID int PRIMARY KEY AUTO_INCREMENT,
+    Amount double not null,
+    LastBalance double not null,
+    NewBalance double not null,
+   	UserID int not null,
+    ProcessedBy int not null,
+    Details varchar(255),
+    Description varchar(255) not null,
+    Type varchar(255) not null,
+    Date datetime DEFAULT CURRENT_TIMESTAMP()
+    
+);
+create table events
+(
+    EventID int PRIMARY KEY AUTO_INCREMENT,
+    EventName varchar(255) not null,
+    EventDescription varchar(255),
+    DateCreated datetime DEFAULT CURRENT_TIMESTAMP(),
+    StartDate datetime,
+    EndDate datetime,
+    Status varchar(255)
+);
+
+create table cockfight
+(
+    CockfightID int PRIMARY KEY AUTO_INCREMENT,
+    Status varchar(255),
+    Winner varchar(255),
+    FightNumber varchar(255),
+    EventID int not null,
+    FOREIGN KEY (EventID) REFERENCES events(EventID)
+);

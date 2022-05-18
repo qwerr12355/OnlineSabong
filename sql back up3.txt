@@ -1,0 +1,39 @@
+CREATE TABLE operator(
+    OperatorID int PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Firstname varchar(255) NOT NULL,
+    Lastname varchar(255) NOT NULL,
+    GcashNumber int NOT NULL,
+    UserID int NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES users(UserID)
+)
+
+CREATE TABLE player(
+    PlayerID int PRIMARY KEY AUTO_INCREMENT,
+    Firstname varchar(255) NOT NULL,
+    Lastname varchar(255) NOT NULL,
+    Gcashnumber varchar(255) NOT NULL,
+    GcashName varchar(55) NOT NULL,
+    FacebookLink varchar(255) NOT NULL,
+    UserID int,
+    FOREIGN KEY (UserID) REFERENCES users(UserID)
+)
+
+CREATE TABLE UserPlayerRecruit(
+    UserPlayerRecruitID int PRIMARY KEY AUTO_INCREMENT,
+    UserID int NOT NULL,
+    PlayerID int NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES users(UserID),
+    FOREIGN KEY (PlayerID) REFERENCES player(PlayerID)
+)
+
+CREATE TABLE agent(
+    AgentID int PRIMARY KEY AUTO_INCREMENT,
+    Firstname varchar(255) NOT NULL,
+    Lastname varchar(255) NOT NULL,
+    Gcashnumber varchar(255) NOT NULL,
+    GcashName varchar(55) NOT NULL,
+    FacebookLink varchar(255) NOT NULL,
+    DateCreated datetime DEFAULT CURRENT_TIMESTAMP(),
+    UserID int,
+    FOREIGN KEY (UserID) REFERENCES users(UserID)
+)
